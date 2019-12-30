@@ -17,8 +17,7 @@
 package ml.dmlc.xgboost4j.scala.spark
 
 import ml.dmlc.xgboost4j.scala.spark.params._
-
-import org.apache.spark.ml.param.shared.HasWeightCol
+import org.apache.spark.ml.param.{Param, Params}
 
 private[spark] sealed trait XGBoostEstimatorCommon extends GeneralParams with LearningTaskParams
   with BoosterParams with RabitParams with ParamMapFuncs with NonParamVariables {
@@ -27,6 +26,15 @@ private[spark] sealed trait XGBoostEstimatorCommon extends GeneralParams with Le
     getCheckpointPath.nonEmpty && getCheckpointInterval > 0
   }
 }
+
+trait HasWeightCol extends Params {
+
+  final val weightCol: Param[String] = new Param[String](this, "weightCol",
+    "weight column name. If this is not set or empty, we treat all instance weights as 1.0")
+
+  final def getWeightCol: String = $(weightCol)
+}
+
 
 private[spark] trait XGBoostClassifierParams extends HasWeightCol with HasBaseMarginCol
   with HasNumClass with HasLeafPredictionCol with HasContribPredictionCol
